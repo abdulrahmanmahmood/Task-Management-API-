@@ -1,4 +1,28 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { RegisterDto } from './dto/register.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { LocalAuthGuard } from './guards/local-auth/local-auth.guard';
+import { RefreshAuthGuard } from './guards/refresh-auth/refresh-auth.guard';
 
 @Controller('auth')
-export class AuthController {}
+export class AuthController {
+  constructor(private readonly authService: AuthService) {}
+
+  @Post('register')
+  register(@Body() registerDto: RegisterDto) {
+    return this.authService.register(registerDto);
+  }
+
+  @UseGuards(LocalAuthGuard)
+  @Post('login')
+  async login(@Request() req) {
+    return this.authService.login(req.user.id);
+  }
+
+  @Post('refresh-token')
+  @UseGuards(RefreshAuthGuard)
+  async refreshToken(@Request() req) {
+    return this.authService.refreshToken(req.user.id);
+  }
+}

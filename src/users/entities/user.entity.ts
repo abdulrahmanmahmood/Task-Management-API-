@@ -20,7 +20,6 @@ export class User {
   @Column({ nullable: true })
   avatar: string;
 
-  // enum 'admin', 'manager', 'member', default 'member'
   @Column({
     type: 'enum',
     enum: ['admin', 'manager', 'member'],
@@ -37,4 +36,7 @@ export class User {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+
+  @Column({ default: 'changeme123' })
+  refreshToken: string;
 }

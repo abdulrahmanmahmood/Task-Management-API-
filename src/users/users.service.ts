@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,12 +7,19 @@ import { Not, Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
   ) {}
   create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+    try {
+      const user = this.usersRepository.create(createUserDto);
+      return this.usersRepository.save(user);
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
   }
 
   findAll() {
@@ -24,15 +31,12 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
-    return user;
+    const { password, ...result } = user;
+    return result;
   }
 
   async findOneByEmail(email: string) {
-    const user = await this.usersRepository.findOneBy({ email });
-    if (!user) {
-      throw new NotFoundException(`User with email ${email} not found`);
-    }
-    return user;
+    return await this.usersRepository.findOneBy({ email });
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
