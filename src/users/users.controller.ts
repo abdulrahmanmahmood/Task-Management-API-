@@ -31,9 +31,11 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@Request() req) {
+  async getProfile(@Request() req) {
     console.log(req.user);
-    return this.usersService.findOneById(req.user.id);
+    const user = await this.usersService.findOneById(req.user.id);
+    const { hashedRefreshToken, ...result } = user;
+    return result;
   }
 
   @Get(':id')

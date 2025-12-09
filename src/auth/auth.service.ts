@@ -3,8 +3,7 @@ import {
   Inject,
   Injectable,
   Logger,
-  LoggerService,
-  Post,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { RegisterDto } from './dto/register.dto';
@@ -13,6 +12,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthGWTPayload } from './types/auth-jwtPayload';
 import type { ConfigType } from '@nestjs/config';
 import refreshJwtConfig from 'src/config/refresh-jwt.config';
+import { identity } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -51,11 +51,27 @@ export class AuthService {
   }
 
   async login(userId: string) {
-    return await this.generateTokens(userId);
+    const { refreshToken, accessToken } = await this.generateTokens(userId);
+    const hashedRefreshToken = await argon2.hash(refreshToken);
+
+    await this.userService.updateHashedRefreshToken(userId, hashedRefreshToken);
+    return {
+      userId,
+      accessToken,
+      refreshToken,
+    };
   }
 
   async refreshToken(userId: string) {
-    return await this.generateTokens(userId);
+    const { accessToken, refreshToken } = await this.generateTokens(userId);
+    const hashedRefreshToken = await argon2.hash(refreshToken);
+
+    await this.userService.updateHashedRefreshToken(userId, hashedRefreshToken);
+    return {
+      userId,
+      accessToken,
+      refreshToken,
+    };
   }
   async validateUser(email: string, password: string) {
     try {
@@ -70,7 +86,10 @@ export class AuthService {
       return {
         id: user.id,
       };
-    } catch (error) {}
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
   }
 
   private async hashPassword(password: string): Promise<string> {
@@ -81,7 +100,7 @@ export class AuthService {
     const user = await this.userService.findOneById(userId);
     const payload: AuthGWTPayload = { sub: userId, username: user.email };
 
-    const [token, refreshToken] = await Promise.all([
+    const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload),
       this.jwtService.signAsync(payload, {
         secret: this.refreshJwtOptions.secret,
@@ -89,6 +108,27 @@ export class AuthService {
       }),
     ]);
 
-    return { token, refreshToken };
+    return { accessToken, refreshToken };
+  }
+
+  async validateRefreshToken(userId: string, refreshToken: string) {
+    const user = await this.userService.findOneById(userId.toString());
+    if (!user || !user.hashedRefreshToken)
+      throw new UnauthorizedException('Unauthorized');
+    const refreshTokenMatches = await argon2.verify(
+      user.hashedRefreshToken,
+      refreshToken,
+    );
+
+    if (!refreshTokenMatches) {
+      throw new UnauthorizedException('Unauthorized');
+    }
+    return {
+      id: user.id,
+    };
+  }
+
+  async logout(userId: string) {
+    await this.userService.updateHashedRefreshToken(userId, null);
   }
 }

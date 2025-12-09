@@ -37,6 +37,6 @@ export class User {
   })
   updatedAt: Date;
 
-  @Column({ default: 'changeme123' })
-  refreshToken: string;
+  @Column({ type: 'varchar', nullable: true })
+  hashedRefreshToken: string | null;
 }
