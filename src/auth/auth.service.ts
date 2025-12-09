@@ -131,4 +131,13 @@ export class AuthService {
   async logout(userId: string) {
     await this.userService.updateHashedRefreshToken(userId, null);
   }
+
+  async resetPassword(email: string) {
+    const user = await this.userService.findOneByEmail(email);
+    if (!user) {
+      // For security, do not reveal that the email does not exist
+      return;
+    }
+    // TODO Implement the logic to send a password reset email or token here
+  }
 }

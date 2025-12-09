@@ -48,4 +48,8 @@ export class UsersService {
       { hashedRefreshToken },
     );
   }
+
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    return await this.usersRepository.update(id, updateUserDto);
+  }
 }

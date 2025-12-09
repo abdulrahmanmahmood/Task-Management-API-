@@ -5,6 +5,7 @@ import {
   Matches,
   MinLength,
 } from 'class-validator';
+import { Role } from 'src/enums/role.enums';
 
 export class CreateUserDto {
   @IsEmail()
@@ -26,6 +27,6 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   lastName: string;
-  role: 'admin' | 'manager' | 'member';
+  role: Role;
   avatar?: string;
 }

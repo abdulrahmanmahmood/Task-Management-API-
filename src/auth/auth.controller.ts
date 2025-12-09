@@ -42,4 +42,10 @@ export class AuthController {
     const userId = req.user.id;
     return this.authService.logout(userId);
   }
+
+  @Post('reset-password')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async resetPassword(@Body() body: { email: string }) {
+    return this.authService.resetPassword(body.email);
+  }
 }
