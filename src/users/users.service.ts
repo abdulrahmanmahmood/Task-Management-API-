@@ -39,14 +39,6 @@ export class UsersService {
     return await this.usersRepository.findOneBy({ email });
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: string) {
-    return `This action removes a #${id} user`;
-  }
-
   async updateHashedRefreshToken(
     userId: string,
     hashedRefreshToken: string | null,
