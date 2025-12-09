@@ -3,6 +3,7 @@ import {
   Inject,
   Injectable,
   Logger,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
@@ -139,5 +140,14 @@ export class AuthService {
       return;
     }
     // TODO Implement the logic to send a password reset email or token here
+  }
+
+  async validateJwtUser(userId: string) {
+    const user = await this.userService.findOneById(userId);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+    const curentUser = { id: user.id, role: user.role };
+    return curentUser;
   }
 }

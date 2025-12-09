@@ -52,4 +52,12 @@ export class UsersService {
   async update(id: string, updateUserDto: UpdateUserDto) {
     return await this.usersRepository.update(id, updateUserDto);
   }
+
+  async remove(id: string) {
+    const result = await this.usersRepository.delete({ id });
+    if (result.affected === 0) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    return;
+  }
 }
