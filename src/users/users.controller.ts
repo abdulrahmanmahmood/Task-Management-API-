@@ -17,15 +17,12 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth/jwt-auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Role } from 'src/enums/role.enums';
 import { Roles } from 'src/common/decorators/roles.decorator';
-import { RolesGuard } from 'src/auth/guards/roles/roles.guard';
-import { STATUS_CODES } from 'http';
 
 @Roles(Role.MEMBER)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Get('profile')
   async getProfile(@Request() req) {
     console.log(req.user);
@@ -41,8 +38,6 @@ export class UsersController {
   }
 
   @Roles(Role.ADMIN)
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
   remove(@Param('id') id: string) {
