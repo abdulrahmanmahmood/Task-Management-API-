@@ -13,8 +13,9 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthGWTPayload } from './types/auth-jwtPayload';
 import type { ConfigType } from '@nestjs/config';
 import refreshJwtConfig from 'src/config/refresh-jwt.config';
-import { identity } from 'rxjs';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { MailService } from 'src/mail/mail.service';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -25,6 +26,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     @Inject(refreshJwtConfig.KEY)
     private readonly refreshJwtOptions: ConfigType<typeof refreshJwtConfig>,
+    private readonly mailService: MailService,
   ) {}
 
   async register(registerDto: RegisterDto) {
@@ -134,13 +136,52 @@ export class AuthService {
     await this.userService.updateHashedRefreshToken(userId, null);
   }
 
-  async resetPassword(email: string) {
-    const user = await this.userService.findOneByEmail(email);
-    if (!user) {
-      // For security, do not reveal that the email does not exist
-      return;
+  async forgetPassword(email: string) {
+    try {
+      const user = await this.userService.findOneByEmail(email);
+      if (!user) return;
+
+      this.logger.log(`Password reset requested for email: ${email}`);
+      const resetToken = Math.random()
+        .toString(36)
+        .substring(2, 8)
+        .toUpperCase();
+      const expires = new Date();
+      expires.setMinutes(expires.getMinutes() + 15);
+
+      await this.userService.updateResetPasswordCode(user.id, resetToken);
+
+      await this.mailService.sendResetPasswordEmail(
+        email,
+        resetToken,
+        user.firstName,
+      );
+
+      return {
+        message: 'Password reset instructions sent',
+        descriptions:
+          'If your email is registered, you will receive password reset instructions',
+      };
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
     }
-    // TODO Implement the logic to send a password reset email or token here
+  }
+
+  async resetPassword(resetPassword: ResetPasswordDto) {
+    const { email, code, newPassword } = resetPassword;
+    const user = await this.userService.findOneByEmail(email);
+    if (!user) return;
+
+    if (user.resetPasswordCode !== code) {
+      throw new BadRequestException('Invalid reset code');
+    }
+    const hashedNewPassword = await this.hashPassword(newPassword);
+    await this.userService.update(user.id, { password: hashedNewPassword });
+    await this.userService.updateResetPasswordCode(user.id, null);
+    return {
+      message: 'Password has been reset successfully',
+    };
   }
 
   async validateJwtUser(userId: string) {

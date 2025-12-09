@@ -79,6 +79,16 @@ export class UsersService {
     return await this.usersRepository.update(id, updateUserDto);
   }
 
+  async updateResetPasswordCode(
+    userId: string,
+    resetPasswordCode: string | null,
+  ) {
+    return await this.usersRepository.update(
+      { id: userId },
+      { resetPasswordCode },
+    );
+  }
+
   async remove(id: string) {
     const result = await this.usersRepository.delete({ id });
     if (result.affected === 0) {

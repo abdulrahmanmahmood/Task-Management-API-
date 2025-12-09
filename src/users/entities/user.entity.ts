@@ -1,4 +1,4 @@
-import { Role } from 'src/enums/role.enums';
+import { Role } from '../../enums/role.enums';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('users')
@@ -40,4 +40,7 @@ export class User {
 
   @Column({ type: 'varchar', nullable: true })
   hashedRefreshToken: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  resetPasswordCode: string | null;
 }
