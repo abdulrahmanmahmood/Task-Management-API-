@@ -4,6 +4,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Not, Repository } from 'typeorm';
+import { QueryUsersDto } from './dto/QueryUsersDto.dto';
+import { UserResponseDto } from './dto/user-response.dto';
+import { UsersResponseDto } from './dto/users-respnose.dto';
 
 @Injectable()
 export class UsersService {
@@ -22,8 +25,31 @@ export class UsersService {
     }
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll(query: QueryUsersDto): Promise<UsersResponseDto<User>> {
+    const { limit = 10, orderBy = 'ASC', page = 1 } = query;
+    const [data, total] = await this.usersRepository.findAndCount({
+      select: [
+        'id',
+        'email',
+        'firstName',
+        'lastName',
+        'avatar',
+        'createdAt',
+        'updatedAt',
+      ],
+      order: {
+        createdAt: orderBy,
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    const response = new UsersResponseDto<User>();
+    response.data = data;
+    response.total = total;
+    response.page = page;
+    response.limit = limit;
+    return response;
   }
 
   async findOneById(id: string) {
