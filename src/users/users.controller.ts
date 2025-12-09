@@ -7,7 +7,6 @@ import {
   Param,
   Body,
   Delete,
-  SetMetadata,
   HttpCode,
   HttpStatus,
   Query,
@@ -40,7 +39,6 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
-  @Roles(Role.ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
   remove(@Param('id') id: string) {
