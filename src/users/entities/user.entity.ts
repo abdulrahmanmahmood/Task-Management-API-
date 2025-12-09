@@ -1,5 +1,6 @@
+import { Organization } from '../../organization/entities/organization.entity';
 import { Role } from '../../enums/role.enums';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
 
 @Entity('users')
 export class User {
@@ -43,4 +44,7 @@ export class User {
 
   @Column({ type: 'varchar', nullable: true })
   resetPasswordCode: string | null;
+
+  @OneToOne(() => Organization, (organization) => organization.Owner)
+  organizationOwner: Organization;
 }

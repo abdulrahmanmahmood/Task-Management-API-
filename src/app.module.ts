@@ -7,6 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
 import { MailModule } from './mail/mail.module';
+import { OrganizationModule } from './organization/organization.module';
+import { Organization } from './organization/entities/organization.entity';
 
 @Module({
   imports: [
@@ -21,13 +23,14 @@ import { MailModule } from './mail/mail.module';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        entities: [User],
+        entities: [User, Organization],
         synchronize: false,
       }),
     }),
     AuthModule,
     UsersModule,
     MailModule,
+    OrganizationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
