@@ -30,7 +30,8 @@ export class UsersController {
     console.log(req.user);
     const user = await this.usersService.findOneById(req.user.id);
 
-    return user;
+    const { hashedRefreshToken, password, ...result } = user;
+    return result;
   }
 
   @Patch(':id')
@@ -54,7 +55,7 @@ export class UsersController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const user = await this.usersService.findOneById(id);
-    const { hashedRefreshToken, ...result } = user;
+    const { hashedRefreshToken, password, ...result } = user;
     return result;
   }
 }

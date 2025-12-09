@@ -14,6 +14,7 @@ import { AuthGWTPayload } from './types/auth-jwtPayload';
 import type { ConfigType } from '@nestjs/config';
 import refreshJwtConfig from 'src/config/refresh-jwt.config';
 import { identity } from 'rxjs';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -149,5 +150,21 @@ export class AuthService {
     }
     const curentUser = { id: user.id, role: user.role };
     return curentUser;
+  }
+
+  async changePassword(userId: string, changePasswordDto: ChangePasswordDto) {
+    console.log('changePasswordDto', changePasswordDto);
+    console.log('userId', userId);
+    const { currentPassword, newPassword } = changePasswordDto;
+    const user = await this.userService.findOneById(userId);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+    const isPasswordValid = await argon2.verify(user.password, currentPassword);
+    if (!isPasswordValid) {
+      throw new BadRequestException('Current password is incorrect');
+    }
+    const hashedNewPassword = await this.hashPassword(newPassword);
+    await this.userService.update(userId, { password: hashedNewPassword });
   }
 }

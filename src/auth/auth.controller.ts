@@ -12,6 +12,7 @@ import { RegisterDto } from './dto/register.dto';
 import { LocalAuthGuard } from './guards/local-auth/local-auth.guard';
 import { RefreshAuthGuard } from './guards/refresh-auth/refresh-auth.guard';
 import { Public } from 'src/common/decorators/public.decorator';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -45,5 +46,17 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async resetPassword(@Body() body: { email: string }) {
     return this.authService.resetPassword(body.email);
+  }
+
+  @Post('change-password')
+  async changePassword(
+    @Request() request,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ) {
+    console.log('chagnePasswordDto in controller', changePasswordDto);
+    return await this.authService.changePassword(
+      request.user.id,
+      changePasswordDto,
+    );
   }
 }

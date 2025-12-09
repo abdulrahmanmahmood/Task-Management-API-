@@ -57,8 +57,8 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
-    const { password, ...result } = user;
-    return result;
+
+    return user;
   }
 
   async findOneByEmail(email: string) {
