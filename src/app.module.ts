@@ -9,6 +9,7 @@ import { User } from './users/entities/user.entity';
 import { MailModule } from './mail/mail.module';
 import { OrganizationModule } from './organization/organization.module';
 import { Organization } from './organization/entities/organization.entity';
+import { OrganizationMember } from './organization/entities/organization-member.entity';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { Organization } from './organization/entities/organization.entity';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        entities: [User, Organization],
+        entities: [User, Organization, OrganizationMember],
         synchronize: false,
       }),
     }),

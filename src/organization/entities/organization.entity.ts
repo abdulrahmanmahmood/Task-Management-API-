@@ -3,9 +3,13 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { OrganizationMember } from './organization-member.entity';
 
 @Entity('organizations')
 export class Organization {
@@ -28,7 +32,10 @@ export class Organization {
   })
   updatedAt: Date;
 
-  @OneToOne(() => User, (user) => user.organizationOwner)
-  @JoinColumn({ name: 'OwnerId' })
+  @ManyToOne(() => User, (user) => user.organizationOwner)
+  @JoinColumn({ name: 'Owner_id' })
   Owner: User;
+
+  @OneToMany(() => OrganizationMember, (member) => member.organization)
+  memberDetails: OrganizationMember[];
 }

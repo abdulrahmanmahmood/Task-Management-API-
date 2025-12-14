@@ -11,4 +11,10 @@ export class UserResponseDto {
   updatedAt: Date;
   @Exclude()
   password: string;
+
+  @Exclude()
+  hashedRefreshToken: string | null;
+
+  @Exclude()
+  resetPasswordCode: string | null;
 }

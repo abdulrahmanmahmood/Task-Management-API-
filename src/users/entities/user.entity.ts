@@ -1,6 +1,7 @@
 import { Organization } from '../../organization/entities/organization.entity';
 import { Role } from '../../enums/role.enums';
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { OrganizationMember } from '../../organization/entities/organization-member.entity';
 
 @Entity('users')
 export class User {
@@ -45,6 +46,12 @@ export class User {
   @Column({ type: 'varchar', nullable: true })
   resetPasswordCode: string | null;
 
-  @OneToOne(() => Organization, (organization) => organization.Owner)
-  organizationOwner: Organization;
+  @OneToMany(() => Organization, (organization) => organization.Owner)
+  organizationOwner: Organization[];
+
+  @OneToMany(
+    () => OrganizationMember,
+    (organizationMember) => organizationMember.user,
+  )
+  organizationMemberships: OrganizationMember[];
 }
