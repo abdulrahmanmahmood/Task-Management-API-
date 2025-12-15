@@ -10,6 +10,8 @@ import { MailModule } from './mail/mail.module';
 import { OrganizationModule } from './organization/organization.module';
 import { Organization } from './organization/entities/organization.entity';
 import { OrganizationMember } from './organization/entities/organization-member.entity';
+import { ProjectsModule } from './projects/projects.module';
+import { Project } from './projects/entities/project.entity';
 
 @Module({
   imports: [
@@ -24,7 +26,7 @@ import { OrganizationMember } from './organization/entities/organization-member.
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        entities: [User, Organization, OrganizationMember],
+        entities: [User, Organization, OrganizationMember, Project],
         synchronize: false,
       }),
     }),
@@ -32,6 +34,7 @@ import { OrganizationMember } from './organization/entities/organization-member.
     UsersModule,
     MailModule,
     OrganizationModule,
+    ProjectsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

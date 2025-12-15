@@ -2,6 +2,7 @@ import { Organization } from '../../organization/entities/organization.entity';
 import { Role } from '../../enums/role.enums';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { OrganizationMember } from '../../organization/entities/organization-member.entity';
+import { Project } from '../../projects/entities/project.entity';
 
 @Entity('users')
 export class User {
@@ -54,4 +55,7 @@ export class User {
     (organizationMember) => organizationMember.user,
   )
   organizationMemberships: OrganizationMember[];
+
+  @OneToMany(() => Project, (project) => project.createdById)
+  projects: Project[];
 }

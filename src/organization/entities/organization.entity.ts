@@ -10,6 +10,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { OrganizationMember } from './organization-member.entity';
+import { Project } from '../../projects/entities/project.entity';
 
 @Entity('organizations')
 export class Organization {
@@ -38,4 +39,7 @@ export class Organization {
 
   @OneToMany(() => OrganizationMember, (member) => member.organization)
   memberDetails: OrganizationMember[];
+
+  @OneToMany(() => Project, (project) => project.OrganizationId)
+  projects: Project[];
 }
