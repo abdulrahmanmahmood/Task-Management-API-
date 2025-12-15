@@ -1,5 +1,5 @@
 import { Expose, Type } from 'class-transformer';
-import { OrganizationRole } from 'src/enums/organization-role.enum';
+import { OrganizationRole } from '../../enums/organization-role.enum';
 
 class UserInfo {
   @Expose()

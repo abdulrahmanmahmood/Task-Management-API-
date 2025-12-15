@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsUUID } from 'class-validator';
-import { OrganizationRole } from 'src/enums/organization-role.enum';
+import { OrganizationRole } from '../../enums/organization-role.enum';
 
 export class InviteMemberDto {
   @IsUUID()

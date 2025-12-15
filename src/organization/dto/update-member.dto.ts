@@ -1,7 +1,7 @@
 import { IsEnum, IsNotEmpty } from 'class-validator';
-import { OrganizationRole } from 'src/enums/organization-role.enum';
+import { OrganizationRole } from '../../enums/organization-role.enum';
 
-export class updateMemberDto {
+export class UpdateMemberDto {
   @IsEnum(OrganizationRole)
   @IsNotEmpty()
   role: OrganizationRole;

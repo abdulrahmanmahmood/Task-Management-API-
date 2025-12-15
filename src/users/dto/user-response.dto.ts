@@ -1,4 +1,5 @@
 import { Exclude } from 'class-transformer';
+import { OrganizationRole } from 'src/enums/organization-role.enum';
 
 export class UserResponseDto {
   id: string;
@@ -6,7 +7,7 @@ export class UserResponseDto {
   firstName: string;
   lastName: string;
   avatar?: string;
-  role: 'admin' | 'manager' | 'member';
+  role: OrganizationRole;
   createdAt: Date;
   updatedAt: Date;
   @Exclude()

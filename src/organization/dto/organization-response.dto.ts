@@ -7,7 +7,9 @@ export class OrganizationResponseDto {
   description: string;
   createdAt: Date;
   updatedAt: Date;
-  
+
   @Type(() => UserResponseDto)
   Owner: UserResponseDto;
+
+  memberCount: number;
 }
