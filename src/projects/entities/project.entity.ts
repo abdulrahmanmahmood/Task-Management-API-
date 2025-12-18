@@ -1,6 +1,7 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -41,11 +42,22 @@ export class Project {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @DeleteDateColumn()
+  deletedAt: Date;
+
+  // Foreign key columns
+  @Column()
+  organizationId: string;
+
+  @Column()
+  createdById: string;
+
+  // Relations
   @ManyToOne(() => Organization, (org) => org.projects)
-  @JoinColumn({ name: 'OrganizationId' })
-  OrganizationId: string;
+  @JoinColumn({ name: 'organizationId' })
+  organization: Organization;
 
   @ManyToOne(() => User, (user) => user.projects)
   @JoinColumn({ name: 'createdById' })
-  createdById: User;
+  createdBy: User;
 }

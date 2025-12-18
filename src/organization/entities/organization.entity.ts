@@ -40,6 +40,6 @@ export class Organization {
   @OneToMany(() => OrganizationMember, (member) => member.organization)
   memberDetails: OrganizationMember[];
 
-  @OneToMany(() => Project, (project) => project.OrganizationId)
+  @OneToMany(() => Project, (project) => project.organization)
   projects: Project[];
 }
